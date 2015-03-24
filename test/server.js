@@ -23,6 +23,7 @@ describe('server', function() {
 
     httpServer = sinon.spy();
     httpServer.listen = sinon.spy();
+    httpServer.on = sinon.spy();
 
     var http = sinon.spy();
     http.createServer = function() {
@@ -47,6 +48,7 @@ describe('server', function() {
     mockery.registerMock('http', http);
     mockery.registerMock('freeport', freeport);
     mockery.registerMock('cleankill', cleankill);
+    mockery.registerMock('http-close', sinon.spy());
 
     Server = require('../lib/server');
 
