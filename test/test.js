@@ -14,7 +14,7 @@ describe('gemini-express', function() {
       freeport,
       http,
       server,
-      sut;
+      plugin;
 
   beforeEach(function() {
     sandbox = sinon.sandbox.create();
@@ -27,6 +27,7 @@ describe('gemini-express', function() {
     };
 
     gemini = sandbox.stub();
+    gemini.config = sandbox.spy();
     gemini.on = function(event, callback) {
       listeners[event] = callback;
     };
@@ -61,7 +62,7 @@ describe('gemini-express', function() {
     mockery.registerMock('http', http);
     mockery.registerMock('freeport', freeport);
 
-    sut = require('../lib/plugin');
+    plugin = require('../lib/plugin');
 
     mockery.disable();
   });
@@ -78,37 +79,43 @@ describe('gemini-express', function() {
     listeners.endRunner({});
   }
 
+  function init(opts) {
+    plugin(gemini, opts);
+  };
+
   it('should use root from options', function() {
-    sut(gemini, { root: 'foobar' });
+    init({ root: 'foobar' });
 
     expect(express.static.args[0][0]).to.equal('foobar');
   });
 
   it('should start server on startRunner', function() {
-    sut(gemini, {});
+    init({});
     startRunner();
 
     assert(server.listen.calledOnce);
   });
 
   it('should use port from options', function() {
-    sut(gemini, {port: 1234});
+    init({port: 1234});
     startRunner();
 
     expect(server.listen.args[0][0]).to.equal(1234);
+    expect(server.port).to.equal(1234);
   });
 
   it('should use free port if not configured', function() {
-    sut(gemini, {});
+    init({});
     startRunner();
 
     expect(server.listen.args[0][0]).to.equal(6666);
+    expect(server.port).to.equal(6666);
   });
 
   it('should close server on interrupt', function() {
     server.close = sinon.spy();
 
-    sut(gemini, {});
+    init({});
     startRunner();
 
     cleankill.listener(sinon.spy());
@@ -119,9 +126,16 @@ describe('gemini-express', function() {
   it('should closer the server on endRunner', function() {
     server.close = sinon.spy();
 
-    sut(gemini, {});
+    init({});
     endRunner();
 
     assert(server.close.called);
+  });
+
+  it('should set rootUrl', function() {
+    init({port:1234});
+    startRunner();
+
+    expect(gemini.config.rootUrl).to.equal('http://localhost:1234');
   });
 });

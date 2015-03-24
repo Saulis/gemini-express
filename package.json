@@ -1,0 +1,26 @@
+{
+  "name": "gemini-express",
+  "version": "1.0.0",
+  "description": "Plugin for starting up Express when running tests with Gemini",
+  "main": "lib/plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gemini",
+    "express",
+    "testing"
+  ],
+  "author": "Sauli Tähkäpää",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "cleankill": "^1.0.0",
+    "express": "^4.12.3",
+    "freeport": "^1.0.4"
+  },
+  "devDependencies": {
+    "chai": "^2.1.2",
+    "mockery": "^1.4.0",
+    "sinon": "^1.14.1"
+  }
+}
