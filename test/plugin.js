@@ -79,12 +79,12 @@ describe('gemini-express', function() {
     expect(gemini.config.rootUrl).to.equal('http://foo.bar');
   });
 
-  it('should closer the server on endRunner', function() {
-    server.close = sinon.spy();
+  it('should stop the server on endRunner', function() {
+    server.stop = sinon.spy();
 
     init({});
     endRunner();
 
-    assert(server.close.called);
+    assert(server.stop.called);
   });
 });
