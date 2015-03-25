@@ -2,6 +2,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var mockery = require('mockery');
 var sinon = require('sinon');
+var Q = require('q');
 
 describe('gemini-express', function() {
   var listeners;
@@ -38,11 +39,11 @@ describe('gemini-express', function() {
   });
 
   function startRunner() {
-    listeners.startRunner({});
+    return listeners.startRunner({});
   }
 
   function endRunner() {
-    listeners.endRunner({});
+    return listeners.endRunner({});
   }
 
   function init(opts) {
@@ -86,5 +87,17 @@ describe('gemini-express', function() {
     endRunner();
 
     assert(server.stop.called);
+  });
+
+  it('should return a promise on startRunner', function() {
+    init({});
+    expect(startRunner()).to.have.property('promiseDispatch');
+  });
+
+  it('should return a promise on endRunner', function() {
+    server.stop = sinon.spy();
+
+    init({});
+    expect(endRunner()).to.have.property('promiseDispatch');
   });
 });
