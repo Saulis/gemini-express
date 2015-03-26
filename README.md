@@ -1,6 +1,8 @@
 # gemini-express
 Plugin for starting up Express when running tests with Gemini
 
+[![Build Status](https://travis-ci.org/Saulis/gemini-express.svg?branch=master)](https://travis-ci.org/Saulis/gemini-express)
+
 ## Notes
 Requires a version of gemini that supports plugin loading. See https://github.com/bem/gemini/pull/127
 
