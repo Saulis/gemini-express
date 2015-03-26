@@ -71,7 +71,7 @@ describe('gemini-express', function() {
       init({});
       startRunner();
 
-      expect(server.start.calledOnce);
+      expect(server.start.calledOnce).to.be.true;
     });
 
     it('should set rootUrl', function() {
@@ -107,7 +107,7 @@ describe('gemini-express', function() {
     it('should stop the server on endRunner', function() {
       endRunner();
 
-      expect(server.stop.called);
+      expect(server.stop.called).to.be.true;
     });
 
     it('should return a promise on endRunner', function() {
@@ -123,7 +123,7 @@ describe('gemini-express', function() {
 
       endRunner();
 
-      expect(deferred.resolve.called);
+      expect(deferred.resolve.called).to.be.true;
     });
   });
 });

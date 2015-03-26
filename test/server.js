@@ -1,4 +1,3 @@
-var assert = require('chai').assert;
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var mockery = require('mockery');
@@ -58,7 +57,7 @@ describe('server', function() {
   it('should serve using the root', function() {
     Server('foobar');
 
-    assert(app.use.calledWith('foobar'));
+    expect(app.use.calledWith('foobar')).to.be.true;
   });
 
   it('should handle undefined root', function() {
@@ -95,7 +94,7 @@ describe('server', function() {
 
       cleankill.listener(sinon.spy());
 
-      assert(httpServer.close.called);
+      expect(httpServer.close.called).to.be.true;
     });
 
     it('should callback with rootUrl', function(done) {
@@ -119,7 +118,7 @@ describe('server', function() {
       var server = Server();
       server.stop();
 
-      assert(httpServer.close.called);
+      expect(httpServer.close.called).to.be.true;
     });
   });
 });
