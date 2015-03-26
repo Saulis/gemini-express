@@ -1,103 +1,129 @@
-var assert = require('chai').assert;
 var expect = require('chai').expect;
 var mockery = require('mockery');
 var sinon = require('sinon');
-var Q = require('q');
 
 describe('gemini-express', function() {
-  var listeners;
-  var root,
+  var serverRoot,
       gemini,
       server,
-      plugin;
+      plugin,
+      q,
+      deferred;
+
+  before(function() {
+    q = sinon.spy();
+    server = sinon.spy();
+
+    mockery.registerMock('q', q);
+    mockery.registerMock('./server', function(root) { serverRoot = root; return server; });
+  });
 
   beforeEach(function() {
+    server.reset();
+    server.start = sinon.spy();
+
+    deferred = sinon.spy();
+    deferred.resolve = sinon.spy();
+
+    q.reset();
+    q.defer = sinon.spy(function() {
+      return deferred;
+    });
+
     gemini = sinon.stub();
     gemini.config = sinon.spy();
     gemini.on = function(event, callback) {
-      listeners[event] = callback;
+      gemini[event] = callback;
     };
-
-    var Server = sinon.stub();
-    Server.returns(server);
-
-    server = sinon.spy();
-    server.start = sinon.spy();
-
-    listeners = {};
 
     mockery.enable({
       warnOnReplace: false,
       warnOnUnregistered: false
     });
 
-    mockery.registerMock('./server', function(_root) { root = _root; return server; });
-
     plugin = require('../lib/plugin');
 
     mockery.disable();
   });
 
-  function startRunner() {
-    return listeners.startRunner({});
-  }
-
-  function endRunner() {
-    return listeners.endRunner({});
-  }
-
   function init(opts) {
     plugin(gemini, opts);
   };
 
-  it('should use root from options', function() {
-    init({ root: 'foobar' });
+  describe('on startRunner', function() {
+    function startRunner() {
+      return gemini.startRunner({});
+    }
 
-    expect(root).to.equal('foobar');
+    it('should set server root from options', function() {
+      init({ root: 'foobar' });
+
+      expect(serverRoot).to.equal('foobar');
+    });
+
+    it('should set server root from options', function() {
+      init(true);
+
+      expect(serverRoot).to.be.undefined;
+    });
+
+    it('should start server on startRunner', function() {
+      init({});
+      startRunner();
+
+      expect(server.start.calledOnce);
+    });
+
+    it('should set rootUrl', function() {
+      server.start = function(opts, cb) {
+        cb('http://foo.bar');
+      };
+
+      init({});
+      startRunner();
+
+      expect(gemini.config.rootUrl).to.equal('http://foo.bar');
+    });
+
+    it('should return a promise on startRunner', function() {
+      deferred.promise = sinon.spy();
+
+      init({});
+
+      expect(startRunner()).to.equal(deferred.promise);
+    });
   });
 
-  it('should use root from options', function() {
-    init(true);
+  describe('on endRunner', function() {
+    function endRunner() {
+      return gemini.endRunner({});
+    }
 
-    expect(root).to.be.undefined;
-  });
+    beforeEach(function() {
+      server.stop = sinon.spy();
+      init({});
+    });
 
-  it('should start server on startRunner', function() {
-    init({});
-    startRunner();
+    it('should stop the server on endRunner', function() {
+      endRunner();
 
-    assert(server.start.calledOnce);
-  });
+      expect(server.stop.called);
+    });
 
-  it('should set rootUrl', function() {
-    server.start = function(opts, cb) {
-      cb('http://foo.bar');
-    };
+    it('should return a promise on endRunner', function() {
+      deferred.promise = sinon.spy();
 
-    init({});
-    startRunner();
+      expect(endRunner()).to.equal(deferred.promise);
+    });
 
-    expect(gemini.config.rootUrl).to.equal('http://foo.bar');
-  });
+    it('should resolve the given promise', function() {
+      server.stop = function(cb) {
+        cb();
+      }
 
-  it('should stop the server on endRunner', function() {
-    server.stop = sinon.spy();
+      endRunner();
 
-    init({});
-    endRunner();
-
-    assert(server.stop.called);
-  });
-
-  it('should return a promise on startRunner', function() {
-    init({});
-    expect(startRunner()).to.have.property('promiseDispatch');
-  });
-
-  it('should return a promise on endRunner', function() {
-    server.stop = sinon.spy();
-
-    init({});
-    expect(endRunner()).to.have.property('promiseDispatch');
+      expect(deferred.resolve.called);
+    });
   });
 });
