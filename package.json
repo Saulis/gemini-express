@@ -1,6 +1,6 @@
 {
   "name": "gemini-express",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Plugin for starting up Express when running tests with Gemini",
   "repository": "https://github.com/Saulis/gemini-express/",
   "main": "lib/plugin.js",
