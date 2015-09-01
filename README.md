@@ -4,7 +4,7 @@ Plugin for starting up Express when running tests with Gemini
 [![Build Status](https://travis-ci.org/Saulis/gemini-express.svg?branch=master)](https://travis-ci.org/Saulis/gemini-express)
 
 ## Requirements
-Works with [gemini](https://github.com/gemini-testing/gemini) [v0.11](https://github.com/gemini-testing/gemini/releases/tag/v0.11.0) or later.
+Works with [gemini](https://github.com/gemini-testing/gemini) [v0.13.4](https://github.com/gemini-testing/gemini/releases/tag/v0.13.4) or later.
 
 ## Installation 
 `npm install gemini-express`
@@ -15,11 +15,12 @@ Works with [gemini](https://github.com/gemini-testing/gemini) [v0.11](https://gi
 
 Set the configuration to your `.gemini.yml`
 
-```
-plugins:
-  express:
-    root: /home/root
-    port: 12345
+```yml
+system:
+    plugins:
+      express:
+        root: /home/root
+        port: 12345
 ```
 
 

@@ -74,15 +74,17 @@ describe('gemini-express', function() {
       expect(server.start.calledOnce).to.be.true;
     });
 
-    it('should set rootUrl', function() {
+    it('should inject rootUrl to browsers', function() {
       server.start = function(opts, cb) {
         cb('http://foo.bar');
       };
 
+      gemini.config._browsers = {chrome: {}, firefox: {}};
       init({});
       startRunner();
 
-      expect(gemini.config.rootUrl).to.equal('http://foo.bar');
+      expect(gemini.config._browsers.chrome.rootUrl).to.equal('http://foo.bar');
+      expect(gemini.config._browsers.firefox.rootUrl).to.equal('http://foo.bar');
     });
 
     it('should return a promise on startRunner', function() {
