@@ -6,7 +6,9 @@ Plugin for starting up Express when running tests with Gemini
 ## Requirements
 Works with [gemini](https://github.com/gemini-testing/gemini) [v0.13.4](https://github.com/gemini-testing/gemini/releases/tag/v0.13.4) or later.
 
-## Installation 
+Latest test run done with _v1.0.6_
+
+## Installation
 `npm install gemini-express`
 
 ## Configuration
@@ -22,8 +24,3 @@ system:
         root: /home/root
         port: 12345
 ```
-
-
-
-
-
