@@ -112,13 +112,24 @@ describe('server', function() {
   });
 
   describe('stop', function() {
-    it('should close the server', function() {
-      httpServer.close = sinon.spy();
+    beforeEach(function() {
+      httpServer.close = sinon.stub();
+    });
 
+    it('should close the server', function() {
       var server = Server();
       server.stop();
 
       expect(httpServer.close.called).to.be.true;
+    });
+
+    it('should invoke callback if provided', function() {
+      var server = Server();
+      var cb = sinon.spy();
+      httpServer.close.callsArg(0);
+      server.stop(cb);
+
+      expect(cb.called).to.be.true;
     });
   });
 });
